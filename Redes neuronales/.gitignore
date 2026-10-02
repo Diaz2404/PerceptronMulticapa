@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+.Python
+build/
+dist/
+eggs/
+*.egg-info/
+.eggs/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.pyre/
+.benchmarks/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+venv*/
+
+# Notebook
+.ipynb_checkpoints/
+
+# Logs and reports
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+# IDEs and editors
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.code-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+._*
+
+# Environment and secrets
+.env
+.env.*
+*.local
+
+# Misc generated files
+*.orig
+*.rej
+*.cache
