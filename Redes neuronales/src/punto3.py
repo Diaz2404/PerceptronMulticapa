@@ -129,16 +129,24 @@ def agregar_ruido(imagen, probabilidad_ruido=0.02):
 
 
 
-# PASO 4: Entrenar el perceptrón multicapa con 10 salidas
-print("=" * 70)
-print("ENTRENAMIENTO DEL PERCEPTRÓN MULTICAPA CON 10 SALIDAS (ONE-HOT)")
-print("=" * 70)
 
 
+i, w, error = perceptron_multicapa(x_train , y_train, cota=5000, n=0.1,num_oculta=10, num_salida=10, funcion_activacion_salida=activacion_logistica, funcion_activacion_oculta=activacion_tangente, derivada_activacion_salida=activacion_logistica_derivada, derivada_activacion_oculta=activacion_tangente_derivada)
 
-i, w, error = perceptron_multicapa(x_train , y_train, cota=4, n=0.1,num_oculta=3, num_salida=10, funcion_activacion_salida=activacion_logistica, funcion_activacion_oculta=activacion_logistica, derivada_activacion_salida=activacion_logistica_derivada, derivada_activacion_oculta=activacion_logistica_derivada)
+print(f"\nEntrenamiento finalizado en {i} iteraciones con error: {error}")
 
+# predecir con los datos de entrenamiento (0-9)
 
+y_pred = []
+for i in range(len(x_train)):
+    prediccion = predecir(x_train[i], w[0], w[1], activacion_logistica, activacion_logistica)
+    y_pred.append(prediccion)
+
+print(y_pred)
+# print("\nPredicciones para los dígitos de entrenamiento (0-9):")
+# for i in range(len(x_train)):
+#     digito_predicho = np.argmax(y_pred[i])
+#     print(f"Dígito {i}: Predicción={digito_predicho}, Salidas={[f'{p:.3f}' for p in y_pred[i]]}")
 
 # # PASO 5: Evaluar predicciones sin ruido
 # print("PREDICCIONES SIN RUIDO (DATOS DE ENTRENAMIENTO):")
