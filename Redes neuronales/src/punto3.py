@@ -107,141 +107,38 @@ entradas = np.array([
 ])
 
 
-# PASO 1: Crear salidas con codificación one-hot (10 salidas, una para cada dígito)
-def crear_salidas_one_hot(cantidad_digitos=10):
-    """Crea matriz de salidas con codificación one-hot"""
-    return np.eye(cantidad_digitos)
 
 
-# salidas_one_hot = crear_salidas_one_hot(10)
+# EVALUAR SIN RUIDO Y SIN TESTEO DE VALIDACION
 salida_one_hot = np.eye(10) # crea matriz identidad de 10x10, que representa la codificación one-hot para los dígitos del 0 al 9
 x_train = entradas
 y_train = salida_one_hot
 
-# PASO 2: Función para agregar ruido a las imágenes
-def agregar_ruido(imagen, probabilidad_ruido=0.02):
-    """Agrega ruido a una imagen intercambiando bits con cierta probabilidad."""
-    imagen_con_ruido = imagen.copy()
-    for i in range(len(imagen_con_ruido)):
-        if np.random.rand() < probabilidad_ruido:
-            imagen_con_ruido[i] = 1 - imagen_con_ruido[i]
-    return imagen_con_ruido
-
-
-
-
-
-i, w, error = perceptron_multicapa(x_train , y_train, cota=5000, n=0.1,num_oculta=10, num_salida=10, funcion_activacion_salida=activacion_logistica, funcion_activacion_oculta=activacion_tangente, derivada_activacion_salida=activacion_logistica_derivada, derivada_activacion_oculta=activacion_tangente_derivada)
+i, w, error = perceptron_multicapa(x_train , y_train, cota=10000, n=0.01,num_oculta=32, num_salida=10, funcion_activacion_salida=activacion_logistica, funcion_activacion_oculta=activacion_logistica, derivada_activacion_salida=activacion_logistica_derivada, derivada_activacion_oculta=activacion_logistica_derivada)
 
 print(f"\nEntrenamiento finalizado en {i} iteraciones con error: {error}")
 
-# predecir con los datos de entrenamiento (0-9)
-
-y_pred = []
+print("\n\nEvaluando sin ruido en los datos de entrenamiento:\n")
 for i in range(len(x_train)):
     prediccion = predecir(x_train[i], w[0], w[1], activacion_logistica, activacion_logistica)
-    y_pred.append(prediccion)
-
-print(y_pred)
-# print("\nPredicciones para los dígitos de entrenamiento (0-9):")
-# for i in range(len(x_train)):
-#     digito_predicho = np.argmax(y_pred[i])
-#     print(f"Dígito {i}: Predicción={digito_predicho}, Salidas={[f'{p:.3f}' for p in y_pred[i]]}")
-
-# # PASO 5: Evaluar predicciones sin ruido
-# print("PREDICCIONES SIN RUIDO (DATOS DE ENTRENAMIENTO):")
-# print("-" * 70)
-
-# aciertos_sin_ruido = 0
-# for digito_idx in range(len(x_train)):
-#     prediccion = predecir(x_train[digito_idx], w[0], w[1], activacion_tangente, activacion_logistica)
-#     digito_predicho = np.argmax(prediccion)
-#     digito_esperado = digito_idx
-    
-#     es_correcto = digito_predicho == digito_esperado
-#     if es_correcto:
-#         aciertos_sin_ruido += 1
-    
-#     print(f"Dígito {digito_esperado}: Predicción={digito_predicho}, "
-#           f"Salidas={[f'{p:.3f}' for p in prediccion]}, "
-#           f"Correcto: {'✓' if es_correcto else '✗'}")
-
-# precisión_sin_ruido = (aciertos_sin_ruido / len(x_train)) * 100
-# print(f"\nPrecisión sin ruido: {aciertos_sin_ruido}/{len(x_train)} ({precisión_sin_ruido:.1f}%)\n")
+    print(f"Dígito {i}: Predicción Sin Ruido={np.argmax(prediccion)}, \nSalida= {prediccion} \n{y_train[i]} \n")
 
 
-# # PASO 6: Evaluar con ruido
-# print("=" * 70)
-# print("PREDICCIONES CON RUIDO (PROBABILIDAD 0.02)")
-# print("=" * 70)
+# EVALUAR CON RUIDO Y SIN TESTEO DE VALIDACION
+def agregar_ruido_al_vector(vector, probabilidad):
+    vector_ruidoso = vector.copy()
+    for i in range(len(vector)):
+        if np.random.rand() < probabilidad:
+            vector_ruidoso[i] = 1 - vector_ruidoso[i]  # Cambiamos el bit (0 a 1 o 1 a 0)
+    return vector_ruidoso   
 
-# probabilidad_ruido = 0.02
-# num_pruebas_ruido = 10
-# resultados_con_ruido = {}
+print("\n\nEvaluando con ruido en los datos de entrenamiento (probabilidad de ruido = 0.02):\n")
 
-# for digito_idx in range(len(x_train)):
-#     aciertos_para_digito = 0
-#     print(f"\nDígito {digito_idx}:")
-#     print("-" * 50)
-    
-#     for intento in range(num_pruebas_ruido):
-#         imagen_con_ruido = agregar_ruido(x_train[digito_idx], probabilidad_ruido)
-#         prediccion = predecir(imagen_con_ruido, w[0], w[1], activacion_tangente, activacion_logistica)
-#         digito_predicho = np.argmax(prediccion)
-        
-#         es_correcto = digito_predicho == digito_idx
-#         if es_correcto:
-#             aciertos_para_digito += 1
-        
-#         if intento < 3 or intento >= num_pruebas_ruido - 1:
-#             print(f"  Intento {intento+1}: Predicción={digito_predicho}, Correcto: {'✓' if es_correcto else '✗'}")
-#         elif intento == 3:
-#             print(f"  ...")
-    
-#     precisión_digito = (aciertos_para_digito / num_pruebas_ruido) * 100
-#     resultados_con_ruido[digito_idx] = precisión_digito
-#     print(f"  Aciertos: {aciertos_para_digito}/{num_pruebas_ruido} ({precisión_digito:.1f}%)")
-
-
-# # PASO 7: Resumen de resultados
-# print("\n" + "=" * 70)
-# print("RESUMEN DE RESULTADOS CON RUIDO (p=0.02)")
-# print("=" * 70)
-
-# for digito_idx, precisión in resultados_con_ruido.items():
-#     print(f"Dígito {digito_idx}: {precisión:.1f}%")
-
-# precisión_promedio_ruido = np.mean(list(resultados_con_ruido.values()))
-# print(f"\nPrecisión promedio con ruido: {precisión_promedio_ruido:.1f}%")
-# print(f"Diferencia (sin ruido - con ruido): {precisión_sin_ruido - precisión_promedio_ruido:.1f}%")
-
-# print("\n" + "=" * 70)
-# print("ANÁLISIS Y CONCLUSIONES:")
-# print("=" * 70)
-# print(f"""
-# La red fue entrenada con:
-# - 10 salidas (una para cada dígito 0-9, codificación one-hot)
-# - {num_oculta} neuronas en la capa oculta
-# - Función de activación tangente hiperbólica en capa oculta
-# - Función de activación logística en capa de salida
-
-# Sin ruido, la red logra una precisión del {precisión_sin_ruido:.1f}%.
-
-# Con ruido (2% de probabilidad de invertir bits), la precisión promedio es {precisión_promedio_ruido:.1f}%.
-
-# Esto indica que la capacidad de la red para generalizar a patrones ruidosos
-# depende de cómo fue entrenada. Entrenar también con datos ruidosos mejoraría
-# la robustez ante ruido en producción.
-# """)
-
-
-# if __name__ == "__main__":
-
-#     w_salida = np.array([1,2,3,4,5])
-#     print(w_salida[0])
-
-
-
+# Predecimos con ruido en los datos de entrenamiento
+for i in range(len(x_train)):
+    x_train_ruidoso = agregar_ruido_al_vector(x_train[i], probabilidad=0.02)
+    prediccion = predecir(x_train_ruidoso, w[0], w[1], activacion_logistica, activacion_logistica)
+    print(f"Dígito {i}: Predicción Con Ruido={np.argmax(prediccion)}, \nSalida= {prediccion} \n{y_train[i]} \n")
 
 
 
